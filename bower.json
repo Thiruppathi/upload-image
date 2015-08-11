@@ -9,7 +9,8 @@
     "web-component",
     "web-components",
     "polymer",
-    "seed"
+    "seed",
+    "upload-image"
   ],
   "main": "upload-image.html",
   "license": "http://polymer.github.io/LICENSE.txt",
