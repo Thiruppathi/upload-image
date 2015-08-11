@@ -2,6 +2,7 @@
 
 An element to upload image. It encodes the message to base64 format. Can be used to store image in Firebase
 
+[Demo](https://thiruppathi.github.io/upload-image)
 
 ## Dependencies
 
