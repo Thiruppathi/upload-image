@@ -1,7 +1,13 @@
 # upload-image
 
-An element to upload image. It encodes the message to base64 format. Can be used to store image in Firebase
+An element to upload image. It encodes the message to base64 format.
+Can be used to store the image as dataURI Format in key-store based database like Firebase.
 
+### TO DO
+- Crop image - In Progress
+- Resize Image - In Progress
+- Change the Upload Button style
+- Drag & Drop File Feature
 
 ## Dependencies
 
