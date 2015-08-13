@@ -1,0 +1,230 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<!--
+An element to upload image in base64 format. Can be used to store image in Firebase.
+````
+<upload-image></upload-image>
+````
+### TO DO
+- Crop image
+- Resize Image
+- Change the Upload Button style
+- Drag & Drop File Feature
+@demo
+-->
+<dom-module id="upload-image">
+  <style>
+    .author img {
+      float: left;
+      margin-right: 5px;
+      max-height: 100px;
+      max-width: 100px;
+    }
+
+    .avatar {
+      border-radius: 100%;
+      border: 5px solid #eee;
+      width: 100px;
+      height: 100px;
+    }
+    /* START - Container Fits exactly same as image size */
+
+    .resize-container {
+      position: relative;
+      display: inline-block;
+      cursor: move;
+      margin: 0 auto;
+    }
+
+    .hide {
+      display: none;
+    }
+
+    .resize-container img {
+      display: block
+    }
+
+    .resize-container:hover img,
+    .resize-container:active img {
+      outline: 2px dashed rgba(222, 60, 80, .9);
+    }
+    /* END - Container fits exactly same as image size */
+    /* Start - Resize Handlers */
+
+    .resize-handle-ne,
+    .resize-handle-ne,
+    .resize-handle-se,
+    .resize-handle-nw,
+    .resize-handle-sw {
+      position: absolute;
+      display: block;
+      width: 10px;
+      height: 10px;
+      background: rgba(222, 60, 80, .9);
+      z-index: 999;
+    }
+
+    .resize-handle-nw {
+      top: -5px;
+      left: -5px;
+      cursor: nw-resize;
+    }
+
+    .resize-handle-sw {
+      bottom: -5px;
+      left: -5px;
+      cursor: sw-resize;
+    }
+
+    .resize-handle-ne {
+      top: -5px;
+      right: -5px;
+      cursor: ne-resize;
+    }
+
+    .resize-handle-se {
+      bottom: -5px;
+      right: -5px;
+      cursor: se-resize;
+    }
+  </style>
+  <template>
+    <h1>&lt;upload-image&gt;</h1>
+    <content></content>
+    <label class="filebutton">
+      <span>
+        <input type="file" id="myImage" name="myImage" on-change="uploadImage">
+      </span>
+    </label>
+    </p>
+      <div class="resize-container" hidden="{{showImage}}">
+        <span class="resize-handle resize-handle-nw"></span>
+        <span class="resize-handle resize-handle-ne"></span>
+        <img src="" alt="Image preview..." id="avatar" class="avatar">
+        <span class="resize-handle resize-handle-se"></span>
+        <span class="resize-handle resize-handle-sw"></span>
+      </div>
+
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'upload-image',
+    properties: {
+      showImage: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+        notify: true
+      }
+    },
+    // Element Lifecycle
+    ready: function() {
+      // `ready` is called after all elements have been configured, but
+      // propagates bottom-up. This element's children are ready, but parents
+      // are not.
+      //
+      // This is the point where you should make modifications to the DOM (when
+      // necessary), or kick off any processes the element wants to perform.
+      console.log('ready');
+    },
+    attached: function() {
+      // `attached` fires once the element and its parents have been inserted
+      // into a document.
+      //
+      // This is a good place to perform any work related to your element's
+      // visual state or active behavior (measuring sizes, beginning animations,
+      // loading resources, etc).
+      this.log('attached');
+      this.showImage = false;
+    },
+    detached: function() {
+      // The analog to `attached`, `detached` fires when the element has been
+      // removed from a document.
+      //
+      // Use this to clean up anything you did in `attached`.
+      console.log('detached');
+    },
+    // Element Behavior
+    /**
+     * Attempts to destroy this element's enemies with an any beam of light!
+     *
+     * Or, at least, dispatches an event in the vain hope that someone else will
+     * do the zapping.
+     */
+    uploadImage: function() {
+      console.log('Starting uploadImage');
+      var preview = this.$.avatar;
+      var file = this.$.myImage.files[0];
+      var reader = new FileReader();
+      var result = '';
+      reader.onloadend = function() {
+        result = reader.result;
+        console.log('Reader Result ' + result);
+        preview.src = result;
+      }
+      if (file) {
+        reader.readAsDataURL(file);
+      } else {
+        preview.src = "";
+      }
+      this.showImage = true;
+      document.querySelector('.resize-container').removeAttribute('hidden');
+      this.resizableAvatar(preview);
+      // preview.class="avatar";
+      console.log('Selected Image - ' + this.$.myImage.files[0].name);
+      return result;
+    },
+    log: function(logInfo) {
+      console.log('Im Log - ' + logInfo);
+    },
+    /**
+     * Initialise a Canvas and the Target Image.
+     */
+    resizableAvatar: function(image_target) {
+      console.log('Inside resizableAvatar');
+      var $container,
+        orig_src = new Image(),
+        //image_target = $(image_target).get(0),
+        event_state = {},
+        constrain = false,
+        min_width = 60,
+        min_height = 60,
+        max_width = 800,
+        max_height = 900,
+        resize_canvas = document.createElement('canvas');
+
+      initialiseCanvas = function() {
+        // Create a new image with a copy of the original src
+        // When resizing, we will always use this original copy as the base
+        orig_src.src = image_target.src;
+
+        //container.insertBefore('<span class="resize-handle resize-handle-nw"></span>');
+
+        // Add resize handles
+        // image_target.wrap('<div class="resize-container"></div>')
+        //   .before('<span class="resize-handle resize-handle-nw"></span>')
+        //   .before('<span class="resize-handle resize-handle-ne"></span>')
+        //   .after('<span class="resize-handle resize-handle-se"></span>')
+        //   .after('<span class="resize-handle resize-handle-sw"></span>');
+
+        // Get a variable for the container
+        //$container = image_target.parent('.resize-container');
+        $container = document.querySelector('.resize-container');
+
+        // Add events
+        $container.on('mousedown', '.resize-handle', startResize);
+      };
+
+      initialiseCanvas();
+    }
+  });
+</script>
