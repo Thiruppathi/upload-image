@@ -105,13 +105,7 @@ An element to upload image in base64 format. Can be used to store image in Fireb
       </span>
     </label>
     </p>
-      <div class="resize-container" hidden="{{showImage}}">
-        <span class="resize-handle resize-handle-nw"></span>
-        <span class="resize-handle resize-handle-ne"></span>
-        <img src="" alt="Image preview..." id="avatar" class="avatar">
-        <span class="resize-handle resize-handle-se"></span>
-        <span class="resize-handle resize-handle-sw"></span>
-      </div>
+    <img src="" alt="Image preview..." id="avatar" class="avatar">
 
   </template>
 </dom-module>
@@ -177,7 +171,6 @@ An element to upload image in base64 format. Can be used to store image in Fireb
         preview.src = "";
       }
       this.showImage = true;
-      document.querySelector('.resize-container').removeAttribute('hidden');
       this.resizableAvatar(preview);
       // preview.class="avatar";
       console.log('Selected Image - ' + this.$.myImage.files[0].name);
@@ -207,18 +200,46 @@ An element to upload image in base64 format. Can be used to store image in Fireb
         // When resizing, we will always use this original copy as the base
         orig_src.src = image_target.src;
 
-        //container.insertBefore('<span class="resize-handle resize-handle-nw"></span>');
+        //var wrapper = "<div class='resize-container'>" + image_target + "</div>";
+
+
 
         // Add resize handles
-        // image_target.wrap('<div class="resize-container"></div>')
-        //   .before('<span class="resize-handle resize-handle-nw"></span>')
-        //   .before('<span class="resize-handle resize-handle-ne"></span>')
-        //   .after('<span class="resize-handle resize-handle-se"></span>')
-        //   .after('<span class="resize-handle resize-handle-sw"></span>');
+        //  image_target.wrap('<div class="resize-container"></div>')
+        //    .before('<span class="resize-handle resize-handle-nw"></span>')
+        //    .before('<span class="resize-handle resize-handle-ne"></span>')
+        //    .after('<span class="resize-handle resize-handle-se"></span>')
+        //    .after('<span class="resize-handle resize-handle-sw"></span>');
 
         // Get a variable for the container
         //$container = image_target.parent('.resize-container');
-        $container = document.querySelector('.resize-container');
+        var $container = document.createElement('div');
+        $container.className += " " + '.resize-container';
+
+
+        var nw = document.createElement('span');
+        nw.className += " " + 'resize-handle resize-handle-nw';
+
+        var ne = document.createElement('span');
+        ne.className += " " + 'resize-handle resize-handle-ne';
+
+        var se = document.createElement('span');
+        se.className += " " + 'resize-handle resize-handle-se';
+
+        var sw = document.createElement('span');
+        sw.className += " " + 'resize-handle resize-handle-sw';
+
+        var image_target_parent = image_target.parentNode;
+        
+        Polymer.dom(image_target_parent).insertBefore(nw, image_target);
+        Polymer.dom(image_target_parent).insertBefore(ne, image_target);
+        Polymer.dom(image_target_parent).insertBefore(se, image_target.nextSibling);
+        Polymer.dom(image_target_parent).insertBefore(sw, image_target.nextSibling);
+
+
+
+        //Polymer.dom($container).appendChild(image_target);
+
 
         // Add events
         $container.on('mousedown', '.resize-handle', startResize);
