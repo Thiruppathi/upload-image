@@ -214,8 +214,8 @@ An element to upload image in base64 format. Can be used to store image in Fireb
         // Get a variable for the container
         //$container = image_target.parent('.resize-container');
         var $container = document.createElement('div');
-        $container.className += " " + '.resize-container';
-
+        $container.className += " " + 'resize-container';
+Polymer.dom($container).appendChild(image_target);
 
         var nw = document.createElement('span');
         nw.className += " " + 'resize-handle resize-handle-nw';
@@ -230,7 +230,10 @@ An element to upload image in base64 format. Can be used to store image in Fireb
         sw.className += " " + 'resize-handle resize-handle-sw';
 
         var image_target_parent = image_target.parentNode;
-        
+
+
+
+
         Polymer.dom(image_target_parent).insertBefore(nw, image_target);
         Polymer.dom(image_target_parent).insertBefore(ne, image_target);
         Polymer.dom(image_target_parent).insertBefore(se, image_target.nextSibling);
